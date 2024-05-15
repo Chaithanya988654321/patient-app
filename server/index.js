@@ -1,11 +1,9 @@
 import express from 'express';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 import mysql from 'mysql2';
 import cors from 'cors'
-
-
-// const stripe = initializeStripe("sk_test_51PGRMaSDvmO2eEIIjq94BJP3fGcLI01QdjQJES3N4LaPEdoo2peuV1petJ1SQxzV7QEdlgec9JwF96jMb1HEOLvK00rsPrOpWg");
-
-// Now you can use `stripe` as usual
+const stripe = require('stripe')(`${process.env.Secret_Key`)
 
 const app= express();
 
@@ -75,8 +73,25 @@ app.put('/setappointment', (req, res) => {
 
 //checkout
 app.post('/create-checkout-payment', async(req, res) => {
-    const product=req.body;
-    console.log(product);
+    const {price}=req.body;
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types:["card"],
+        line_items: [{ 
+            price_data: { 
+              currency: 'INR', 
+              product_data:{ 
+                name: 'My product' 
+              }, 
+              unit_amount: price*100,
+            } ,
+            quantity:2
+          }],
+        mode: 'payment',
+        success_url: 'http://localhost:3000/success',
+        cancel_url: 'http://localhost:3000/success',
+      });
+    res.json({id:session.id})
+    
 })
 
 app.listen(8800,()=>{
