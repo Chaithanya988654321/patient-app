@@ -30,7 +30,7 @@ const PatientList = ({ setProgress }) => {
 
   //make pyament
   const makePayment=async()=>{
-    const stripe = await loadStripe('pk_test_51PGRMaSDvmO2eEIILOiYiULgmOhCa3Ewop9bX11saxC30n0Q4DEqkoY1Vy0f6Lfr00s1gZazS4Rv8MXpRLOJ8gaa00NyQTInTQ');
+    const stripe = await loadStripe(`${process.env.REACT_APP_MY_PKEY}`);
     const body={
       price:500
     }
